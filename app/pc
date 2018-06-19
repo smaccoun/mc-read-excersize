@@ -1,0 +1,109 @@
+{-# LANGUAGE OverloadedStrings #-}
+
+module Main where
+
+import Lib
+import qualified Data.ByteString.Lazy as BL
+import qualified Data.Text as T
+import Data.Csv
+import Data.Char
+import qualified Data.Vector as V
+--import Data.Map
+
+
+
+--data BookInfo =
+--  BookInfo
+--    {numRecommendations :: Int
+--    ,recommender :: String
+--    ,source      :: String
+--    }
+
+data RowValue =
+  RowValue
+    {title     :: String
+    ,author :: String
+    ,recommender :: String
+    ,source      :: String
+    ,amazon_link :: String
+    }
+ --   ,description :: String
+ --   ,type'       :: String
+ --   ,genre     :: String
+ --   , length :: String
+ --   ,publish_year :: String
+ --   ,on_list      :: String
+ --   ,review_excerpt  :: String
+ --   }
+
+instance FromNamedRecord RowValue where
+    parseNamedRecord r = RowValue
+       <$> r .: "Title"
+       <*> r .: "Author"
+       <*> r .: "Recommender"
+       <*> r .: "Source"
+       <*> r .: "Amazon_Link"
+--       <*> r .: "Description"
+--       <*> r .: "Type"
+--       <*> r .: "Genre"
+--       <*> r .: "Length"
+--       <*> r .: "Publish_Year"
+--       <*> r .: "On_List"
+--       <*> r .: "Review_Excerpt"
+
+
+main :: IO ()
+main = do
+  getNumberRecommendations
+
+
+getNumberRecommendations :: IO ()
+getNumberRecommendations = do
+  csvData <- BL.readFile "master_list_crop"
+  let decOptions = defaultDecodeOptions {decDelimiter = fromIntegral $ ord '\t' }
+  case decodeByNameWith decOptions csvData of
+        Left err -> putStrLn err
+        Right (_, v) -> mkRecommendationMap v
+
+mkRecommendationMap :: V.Vector RowValue -> IO ()
+mkRecommendationMap allRows =
+  V.forM_ allRows $ \v  ->
+            putStrLn $ "TITLE: " ++ (title v) ++ "  AUTHOR: " ++ (author v)
+
+
+--  let allLines = lines content
+--  let baseMap = Data.Map.empty
+--      fullMap = map (\l -> Data.Map.fromList (mkKeyValue l)) allLines
+--  return fullMap
+--
+--
+--mkKeyValue :: Map String BookInfo -> RowValue -> (String, Int)
+--mkKeyValue curMap rv =
+--  let curRecommenations = getCurRecommendations curMap
+--      curKey = title rv ++ author rv
+--  | isEmpty curMap = Data.Map.singleton
+--  | otherwise =
+--      (curKey,
+--        BookInfo
+--            {numRecommmendations = incNumRecommendations curKey curRecommenations
+--            ,genre = genre rv
+--          }
+--        )
+--
+--
+--incNumRecommendations :: String -> Int -> (String, Int)
+--incNumRecommendations curAuthorTitle curRecommendations =
+--  (curAuthorTitle, curRecommendations + 1)
+--
+--
+--getValue :: Title -> Author -> BookInfo
+--getValue title author =
+--  Map.get (title ++ author)
+--
+--
+--
+--
+--
+--
+--
+--
