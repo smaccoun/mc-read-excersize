@@ -1,3 +1,14 @@
+# Run
+
+```bash
+$ stack build
+$ stack exec mc-read-exe 
+```
+
+# Results
+
+Results are stroed in the file results.txt
+
 ## Prompt
 
 We have supplied you with a `master_list`, which is a collection of book recommendations from famous authors. Each recommendation is separated by a new line, and each field of data for a given recommendation is tab-separated. Assume that this list could grow arbitrarily large in size.

@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  ammar-exe:
+  mc-read-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
